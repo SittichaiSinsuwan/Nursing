@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>รายชื่อนิสิตพยาบาลศาสตร์ ชั้นปีที่ 1</title>
+  <style>
+    /* ============================================= สีหลัก ============================================= */
+    :root {
+      --bg: #f0f6ff; --accent: #1a56a0; --accent-light: #dbeafe; --accent-mid: #2563eb;
+      --text: #1e293b; --muted: #64748b; --border: #cbd5e1; --card: #ffffff;
+      --tag-f-bg: #fce7f3; --tag-f-text: #9d174d; --tag-m-bg: #dbeafe; --tag-m-text: #1d4ed8;
+      --green: #d1fae5; --green-text: #065f46;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI','Sarabun',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ============================================= หน้า LOGIN (รหัสผ่าน) ============================================= */
+    #loginScreen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #1a3a6e 0%, #1a56a0 100%);
+    }
+    .login-box {
+      background: white; border-radius: 20px; padding: 48px 40px;
+      text-align: center; width: 360px; max-width: 90vw;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .login-box .icon { font-size: 3rem; margin-bottom: 16px; }
+    .login-box h2 { font-size: 1.3rem; margin-bottom: 6px; }
+    .login-box p  { color: var(--muted); font-size: 0.9rem; margin-bottom: 24px; line-height: 1.5; }
+    .login-box input[type="password"] {
+      width: 100%; padding: 13px 16px; border: 1.5px solid var(--border);
+      border-radius: 10px; font-size: 1rem; outline: none; margin-bottom: 14px;
+      font-family: inherit; text-align: center;
+    }
+    .login-box input[type="password"]:focus { border-color: var(--accent); }
+    .btn-login {
+      width: 100%; padding: 13px; border: none; border-radius: 10px;
+      background: var(--accent); color: white; font-size: 0.97rem; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+    }
+    .btn-login:hover { background: #14407e; }
+    .login-error {
+      margin-top: 14px; padding: 12px; background: #fee2e2;
+      color: #dc2626; border-radius: 8px; font-size: 0.87rem; display: none;
+    }
+
+    /* ============================================= หน้า LOADING ============================================= */
+    #loadingScreen {
+      min-height: 100vh; display: none; align-items: center; justify-content: center;
+      flex-direction: column; gap: 16px; color: var(--muted);
+    }
+    .spinner {
+      width: 40px; height: 40px; border: 4px solid var(--border);
+      border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ============================================= หน้าหลัก ============================================= */
+    #mainScreen { display: none; }
+    header {
+      background: linear-gradient(135deg, #1a3a6e 0%, #1a56a0 100%); color: white; padding: 24px 32px;
+      display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .header-left h1 { font-size: 1.4rem; font-weight: 700; }
+    .header-left p  { opacity: 0.8; margin-top: 4px; font-size: 0.9rem; }
+    .header-stats { display: flex; gap: 16px; margin-top: 14px; }
+    .stat-box { background: rgba(255,255,255,0.15); border-radius: 10px; padding: 8px 16px; text-align: center; }
+    .stat-box .num { font-size: 1.4rem; font-weight: 700; }
+    .stat-box .lbl { font-size: 0.72rem; opacity: 0.85; }
+    .btn-logout {
+      padding: 7px 14px; background: rgba(255,255,255,0.2); color: white;
+      border: 1px solid rgba(255,255,255,0.4); border-radius: 6px; cursor: pointer;
+      font-size: 0.8rem; font-family: inherit;
+    }
+    .btn-logout:hover { background: rgba(255,255,255,0.3); }
+
+    .toolbar { padding: 16px 32px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .toolbar input {
+      padding: 9px 16px; border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 0.92rem; width: 260px; outline: none; background: white; font-family: inherit;
+    }
+    .toolbar input:focus { border-color: var(--accent); }
+    .filter-btns { display: flex; gap: 6px; }
+    .fbtn {
+      padding: 8px 14px; border: 1.5px solid var(--border); background: white;
+      border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-family: inherit;
+    }
+    .fbtn.active-all { background: var(--accent); color: white; border-color: var(--accent); }
+    .fbtn.active-f   { background: var(--tag-f-bg); color: var(--tag-f-text); border-color: var(--tag-f-text); }
+    .fbtn.active-m   { background: var(--tag-m-bg); color: var(--tag-m-text); border-color: var(--tag-m-text); }
+    .count-label { margin-left: auto; color: var(--muted); font-size: 0.87rem; }
+
+    .table-wrap { margin: 0 32px 32px; background: white; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: var(--accent); }
+    th { padding: 13px 16px; text-align: left; font-size: 0.8rem; color: white; font-weight: 600; }
+    td { padding: 12px 16px; border-top: 1px solid var(--border); font-size: 0.91rem; vertical-align: middle; }
+    tbody tr:hover { background: var(--accent-light); cursor: pointer; }
+
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+    .badge-f { background: var(--tag-f-bg); color: var(--tag-f-text); }
+    .badge-m { background: var(--tag-m-bg); color: var(--tag-m-text); }
+    .badge-tcas { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; background: var(--green); color: var(--green-text); }
+    .name-link { color: var(--accent-mid); font-weight: 600; cursor: pointer; }
+    .name-link:hover { text-decoration: underline; }
+    .empty { text-align: center; padding: 60px; color: var(--muted); }
+
+    /* ============================================= MODAL ============================================= */
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; }
+    .overlay.open { display: flex; }
+    .modal { background: white; border-radius: 16px; width: 520px; max-width: 95vw; max-height: 90vh; overflow-y: auto; padding: 32px; position: relative; box-shadow: 0 24px 60px rgba(0,0,0,0.25); }
+    .modal-close { position: absolute; top: 14px; right: 18px; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--muted); }
+    .modal-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; gap: 14px; color: var(--muted); }
+
+    .avatar { width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 14px; }
+    .avatar-f { background: linear-gradient(135deg,#ec4899,#f472b6); }
+    .avatar-m { background: linear-gradient(135deg,#2563eb,#60a5fa); }
+    .modal h2 { font-size: 1.3rem; margin-bottom: 3px; }
+    .modal .subtitle { color: var(--muted); font-size: 0.87rem; margin-bottom: 18px; }
+
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .info-item label { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 3px; }
+    .info-item span { font-weight: 600; font-size: 0.91rem; }
+    .info-full { margin-bottom: 12px; }
+    .info-full label { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 4px; }
+    .info-full span { font-weight: 600; font-size: 0.91rem; }
+    hr.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+    .form-group { margin-bottom: 11px; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; color: var(--muted); }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 0.92rem; font-family: inherit; outline: none;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .btn-save { flex: 1; padding: 11px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 0.93rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .btn-save:hover { background: #1a3a6e; }
+    .btn-delete { padding: 11px 16px; background: #fee2e2; color: #dc2626; border: none; border-radius: 8px; font-size: 0.93rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .btn-edit { flex: 1; padding: 11px; background: var(--accent-light); color: var(--accent); border: none; border-radius: 8px; font-size: 0.93rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+    @media(max-width:600px){
+      header { padding: 16px; }
+      .toolbar, .table-wrap { margin: 0; padding: 12px; border-radius: 0; }
+      .table-wrap { margin-bottom: 16px; }
+      th:nth-child(5), td:nth-child(5), th:nth-child(6), td:nth-child(6) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================= หน้า LOGIN (รหัสผ่าน) ============================================= -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="icon">🏥</div>
+    <h2>รายชื่อนิสิตพยาบาลศาสตร์</h2>
+    <p>ชั้นปีที่ 1 ปีการศึกษา 2569<br>กรอกรหัสผ่านที่ได้รับจากเพื่อนในห้อง</p>
+    <!-- กด Enter ก็ login ได้ -->
+    <input type="password" id="passwordInput" placeholder="รหัสผ่าน" onkeydown="if(event.key==='Enter') login()"/>
+    <button class="btn-login" onclick="login()">เข้าสู่ระบบ</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ============================================= หน้า LOADING ============================================= -->
+<div id="loadingScreen">
+  <div class="spinner"></div>
+  <div>กำลังโหลดข้อมูล...</div>
+</div>
+
+<!-- ============================================= หน้าหลัก ============================================= -->
+<div id="mainScreen">
+  <header>
+    <div class="header-left">
+      <h1>🏥 รายชื่อนิสิตคณะพยาบาลศาสตร์ ชั้นปีที่ 1</h1>
+      <p>มหาวิทยาลัยเกษตรศาสตร์ · ปีการศึกษา 2569</p>
+      <div class="header-stats">
+        <div class="stat-box"><div class="num" id="totalCount">—</div><div class="lbl">ทั้งหมด</div></div>
+        <div class="stat-box"><div class="num" id="femaleCount">—</div><div class="lbl">นางสาว</div></div>
+        <div class="stat-box"><div class="num" id="maleCount">—</div><div class="lbl">นาย</div></div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
+  </header>
+
+  <div class="toolbar">
+    <input type="text" id="searchBox" placeholder="🔍 ค้นหาชื่อ, รหัสนิสิต, ชื่อเล่น..." oninput="filterTable()"/>
+    <div class="filter-btns">
+      <button class="fbtn active-all" id="btnAll" onclick="setGender('all')">ทั้งหมด</button>
+      <button class="fbtn" id="btnF" onclick="setGender('F')">นางสาว</button>
+      <button class="fbtn" id="btnM" onclick="setGender('M')">นาย</button>
+    </div>
+    <button class="fbtn" style="background:#f0fdf4;color:#166534;border-color:#166534;" onclick="openAddForm()">+ เพิ่มนิสิต</button>
+    <span class="count-label" id="countLabel"></span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ลำดับ</th><th>รหัสนิสิต</th><th>ชื่อ-นามสกุล</th><th>ชื่อเล่น</th><th>เพศ</th><th>TCAS รอบ</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="empty" id="emptyMsg" style="display:none;">ไม่พบนิสิตที่ค้นหา</div>
+  </div>
+</div>
+
+<!-- ============================================= MODAL POPUP ============================================= -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+
+    <div id="modalLoading" class="modal-loading">
+      <div class="spinner"></div><div>กำลังโหลด...</div>
+    </div>
+
+    <!-- VIEW MODE -->
+    <div id="viewMode" style="display:none;">
+      <div class="avatar" id="viewAvatar">N</div>
+      <h2 id="viewName"></h2>
+      <p class="subtitle" id="viewSubtitle"></p>
+
+      <div class="info-grid">
+        <div class="info-item"><label>ชื่อเล่น</label><span id="vNickname">—</span></div>
+        <div class="info-item"><label>เพศ</label><span id="vGender">—</span></div>
+        <div class="info-item"><label>รหัสนิสิต</label><span id="vStudentId">—</span></div>
+        <div class="info-item"><label>TCAS รอบที่</label><span id="vTcas">—</span></div>
+        <div class="info-item"><label>เบอร์โทร</label><span id="vPhone">—</span></div>
+        <div class="info-item"><label>Line ID</label><span id="vLine">—</span></div>
+        <div class="info-item"><label>Instagram</label><span id="vIg">—</span></div>
+        <div class="info-item"><label>วันเกิด</label><span id="vDob">—</span></div>
+        <div class="info-item"><label>จังหวัดบ้านเกิด</label><span id="vHome">—</span></div>
+      </div>
+
+      <div class="info-full"><label>โครงการที่รับเข้า</label><span id="vProject">—</span></div>
+      <div class="info-full"><label>โน้ต</label><span id="vNote" style="font-weight:400;line-height:1.6;">—</span></div>
+
+      <hr class="divider"/>
+      <div class="modal-actions">
+        <button class="btn-edit" onclick="switchToEdit()">✏️ แก้ไข</button>
+        <button class="btn-delete" onclick="deleteStudent()">🗑 ลบ</button>
+      </div>
+    </div>
+
+    <!-- EDIT / ADD MODE -->
+    <div id="editMode" style="display:none;">
+      <h2 id="editTitle" style="margin-bottom:16px;">แก้ไขข้อมูล</h2>
+
+      <div class="form-row">
+        <div class="form-group"><label>คำนำหน้า</label>
+          <select id="fPrefix"><option value="นางสาว">นางสาว</option><option value="นาย">นาย</option><option value="นาง">นาง</option></select>
+        </div>
+        <div class="form-group"><label>เพศ</label>
+          <select id="fGender"><option value="F">หญิง (F)</option><option value="M">ชาย (M)</option></select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group"><label>ชื่อ *</label><input id="fFirstName" type="text" placeholder="ชื่อ"/></div>
+        <div class="form-group"><label>นามสกุล *</label><input id="fLastName" type="text" placeholder="นามสกุล"/></div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group"><label>รหัสนิสิต *</label><input id="fStudentId" type="text" placeholder="เช่น 6911700019"/></div>
+        <div class="form-group"><label>ชื่อเล่น</label><input id="fNickname" type="text" placeholder="เช่น นุ่น"/></div>
+      </div>
+
+      <div class="form-group"><label>โครงการที่รับเข้า</label><input id="fProject" type="text" placeholder="เช่น โครงการช้างเผือก"/></div>
+
+      <div class="form-row">
+        <div class="form-group"><label>TCAS รอบที่</label>
+          <select id="fTcas"><option value="">—</option><option value="1">รอบที่ 1</option><option value="2">รอบที่ 2</option><option value="3">รอบที่ 3</option><option value="4">รอบที่ 4</option></select>
+        </div>
+        <div class="form-group"><label>วันเกิด</label><input id="fDob" type="date"/></div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group"><label>เบอร์โทรศัพท์</label><input id="fPhone" type="tel" placeholder="เช่น 081-234-5678"/></div>
+        <div class="form-group"><label>Line ID</label><input id="fLine" type="text" placeholder="เช่น @name"/></div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group"><label>Instagram</label><input id="fIg" type="text" placeholder="เช่น @name"/></div>
+        <div class="form-group"><label>จังหวัดบ้านเกิด</label><input id="fHome" type="text" placeholder="เช่น กรุงเทพฯ"/></div>
+      </div>
+
+      <div class="form-group"><label>โน้ต / ข้อมูลเพิ่มเติม</label><textarea id="fNote" rows="2" placeholder="บันทึกอะไรก็ได้..."></textarea></div>
+
+      <div class="modal-actions">
+        <button class="btn-save" onclick="saveStudent()">💾 บันทึก</button>
+        <button class="btn-delete" onclick="cancelEdit()">ยกเลิก</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // =============================================
+  // ⚙️ ตั้งค่าตรงนี้!
+  // ใส่ URL ของ Apps Script Web App ที่ Deploy แล้ว
+  // =============================================
+  const API_URL = "ใส่ URL ของ Apps Script ตรงนี้";
+
+  // รหัสผ่านต้องตรงกับใน Apps Script (PASSWORD ตัวแปรใน Code.gs)
+  let userPassword = "";
+
+  let students      = [];
+  let currentDetail = null;
+  let currentId     = null;
+  let isAdding      = false;
+  let genderFilter  = "all";
+
+  // =============================================
+  // LOGIN ด้วยรหัสผ่าน
+  // =============================================
+  async function login() {
+    const pw = document.getElementById("passwordInput").value.trim();
+    if (!pw) { showLoginError("กรุณากรอกรหัสผ่าน"); return; }
+
+    userPassword = pw;
+    show("loadingScreen");
+    hide("loginScreen");
+
+    try {
+      const res = await callAPI({ action: "getList" });
+      if (res.error === "wrong_password") {
+        showLoginError("❌ รหัสผ่านไม่ถูกต้อง");
+        userPassword = "";
+        return;
+      }
+      if (res.ok) {
+        students = res.students;
+        updateStats();
+        renderTable(students);
+        show("mainScreen");
+        hide("loadingScreen");
+        // จำรหัสผ่านไว้ใน session (หายไปถ้าปิดแท็บ)
+        sessionStorage.setItem("pw", pw);
+      } else {
+        showLoginError("เกิดข้อผิดพลาด กรุณาลองใหม่");
+      }
+    } catch(e) {
+      showLoginError("เชื่อมต่อไม่ได้ ตรวจสอบ API_URL ใน code");
+    }
+  }
+
+  function showLoginError(msg) {
+    show("loginScreen");
+    hide("loadingScreen");
+    const el = document.getElementById("loginError");
+    el.textContent = msg;
+    el.style.display = "block";
+  }
+
+  function logout() {
+    if (confirm("ออกจากระบบ?")) {
+      students = [];
+      userPassword = "";
+      sessionStorage.removeItem("pw");
+      document.getElementById("passwordInput").value = "";
+      show("loginScreen");
+      hide("mainScreen");
+    }
+  }
+
+  // =============================================
+  // อัปเดตสถิติ
+  // =============================================
+  function updateStats() {
+    document.getElementById("totalCount").textContent  = students.length;
+    document.getElementById("femaleCount").textContent = students.filter(s => s.gender === "F").length;
+    document.getElementById("maleCount").textContent   = students.filter(s => s.gender === "M").length;
+  }
+
+  // =============================================
+  // วาดตาราง
+  // =============================================
+  function renderTable(list) {
+    const tbody = document.getElementById("tableBody");
+    tbody.innerHTML = "";
+    document.getElementById("emptyMsg").style.display = list.length === 0 ? "block" : "none";
+
+    list.forEach((s, i) => {
+      const gBadge = s.gender === "F" ? '<span class="badge badge-f">หญิง</span>' : '<span class="badge badge-m">ชาย</span>';
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${i + 1}</td>
+        <td>${s.studentId}</td>
+        <td><span class="name-link" onclick="openStudent('${s.studentId}')">${s.prefix}${s.firstName} ${s.lastName}</span></td>
+        <td>${s.nickname || "—"}</td>
+        <td>${gBadge}</td>
+        <td><span class="badge-tcas">รอบที่ ${s.tcas || "—"}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+    document.getElementById("countLabel").textContent = `แสดง ${list.length} จาก ${students.length} คน`;
+  }
+
+  // =============================================
+  // ค้นหา + กรองเพศ
+  // =============================================
+  function filterTable() {
+    const q = document.getElementById("searchBox").value.toLowerCase();
+    const list = students.filter(s => {
+      const matchG = genderFilter === "all" || s.gender === genderFilter;
+      const matchQ = (s.firstName + " " + s.lastName).includes(q) || s.studentId.includes(q) || (s.nickname || "").toLowerCase().includes(q);
+      return matchG && matchQ;
+    });
+    renderTable(list);
+  }
+
+  function setGender(g) {
+    genderFilter = g;
+    document.getElementById("btnAll").className = "fbtn" + (g==="all" ? " active-all" : "");
+    document.getElementById("btnF").className   = "fbtn" + (g==="F"   ? " active-f"   : "");
+    document.getElementById("btnM").className   = "fbtn" + (g==="M"   ? " active-m"   : "");
+    filterTable();
+  }
+
+  // =============================================
+  // เปิด modal ดูรายละเอียด
+  // =============================================
+  async function openStudent(studentId) {
+    currentId = studentId;
+    isAdding  = false;
+    document.getElementById("modalLoading").style.display = "flex";
+    document.getElementById("viewMode").style.display     = "none";
+    document.getElementById("editMode").style.display     = "none";
+    document.getElementById("overlay").classList.add("open");
+
+    try {
+      const res = await callAPI({ action: "getDetail", studentId });
+      if (res.ok) {
+        currentDetail = res.student;
+        fillViewMode(res.student);
+        document.getElementById("modalLoading").style.display = "none";
+        document.getElementById("viewMode").style.display     = "block";
+      } else {
+        closeModalDirect();
+        alert("ไม่พบข้อมูลนิสิต");
+      }
+    } catch(e) {
+      closeModalDirect();
+      alert("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+    }
+  }
+
+  function fillViewMode(s) {
+    const av = document.getElementById("viewAvatar");
+    av.textContent = s.firstName[0];
+    av.className   = "avatar " + (s.gender === "F" ? "avatar-f" : "avatar-m");
+
+    document.getElementById("viewName").textContent     = s.prefix + s.firstName + " " + s.lastName;
+    document.getElementById("viewSubtitle").textContent = "รหัสนิสิต " + s.studentId;
+    document.getElementById("vNickname").textContent    = s.nickname || "—";
+    document.getElementById("vGender").textContent      = s.gender === "F" ? "หญิง" : "ชาย";
+    document.getElementById("vStudentId").textContent   = s.studentId || "—";
+    document.getElementById("vPhone").textContent       = s.phone || "—";
+    document.getElementById("vLine").textContent        = s.line || "—";
+    document.getElementById("vIg").textContent          = s.ig || "—";
+    document.getElementById("vDob").textContent         = s.dob || "—";
+    document.getElementById("vHome").textContent        = s.home || "—";
+    document.getElementById("vTcas").textContent        = s.tcas ? "รอบที่ " + s.tcas : "—";
+    document.getElementById("vProject").textContent     = s.project || "—";
+    document.getElementById("vNote").textContent        = s.note || "—";
+  }
+
+  // =============================================
+  // เพิ่มนิสิตใหม่
+  // =============================================
+  function openAddForm() {
+    isAdding = true;
+    currentId = null;
+    clearForm();
+    document.getElementById("editTitle").textContent = "เพิ่มนิสิตใหม่";
+    document.getElementById("modalLoading").style.display = "none";
+    document.getElementById("viewMode").style.display     = "none";
+    document.getElementById("editMode").style.display     = "block";
+    document.getElementById("overlay").classList.add("open");
+  }
+
+  function switchToEdit() {
+    const s = currentDetail;
+    document.getElementById("fPrefix").value    = s.prefix    || "นางสาว";
+    document.getElementById("fGender").value    = s.gender    || "F";
+    document.getElementById("fFirstName").value = s.firstName || "";
+    document.getElementById("fLastName").value  = s.lastName  || "";
+    document.getElementById("fStudentId").value = s.studentId || "";
+    document.getElementById("fNickname").value  = s.nickname  || "";
+    document.getElementById("fProject").value   = s.project   || "";
+    document.getElementById("fTcas").value      = s.tcas      || "";
+    document.getElementById("fDob").value       = s.dob       || "";
+    document.getElementById("fPhone").value     = s.phone     || "";
+    document.getElementById("fLine").value      = s.line      || "";
+    document.getElementById("fIg").value        = s.ig        || "";
+    document.getElementById("fHome").value      = s.home      || "";
+    document.getElementById("fNote").value      = s.note      || "";
+
+    document.getElementById("editTitle").textContent = "แก้ไขข้อมูล";
+    document.getElementById("viewMode").style.display = "none";
+    document.getElementById("editMode").style.display = "block";
+  }
+
+  // =============================================
+  // บันทึก
+  // =============================================
+  async function saveStudent() {
+    const fn  = document.getElementById("fFirstName").value.trim();
+    const ln  = document.getElementById("fLastName").value.trim();
+    const sid = document.getElementById("fStudentId").value.trim();
+    if (!fn || !ln || !sid) { alert("กรุณากรอกชื่อ, นามสกุล และรหัสนิสิต"); return; }
+
+    const student = {
+      prefix: document.getElementById("fPrefix").value,
+      gender: document.getElementById("fGender").value,
+      firstName: fn, lastName: ln, studentId: sid,
+      nickname: document.getElementById("fNickname").value.trim(),
+      project: document.getElementById("fProject").value.trim(),
+      tcas: document.getElementById("fTcas").value,
+      dob: document.getElementById("fDob").value,
+      phone: document.getElementById("fPhone").value.trim(),
+      line: document.getElementById("fLine").value.trim(),
+      ig: document.getElementById("fIg").value.trim(),
+      home: document.getElementById("fHome").value.trim(),
+      note: document.getElementById("fNote").value.trim(),
+    };
+
+    try {
+      const res = await callAPI({ action: "saveStudent", student }, "POST");
+      if (res.ok) { await reloadList(); closeModalDirect(); }
+      else { alert("บันทึกไม่สำเร็จ"); }
+    } catch(e) { alert("เกิดข้อผิดพลาดในการบันทึก"); }
+  }
+
+  // =============================================
+  // ลบนิสิต
+  // =============================================
+  async function deleteStudent() {
+    if (!confirm("ลบนิสิตคนนี้ออกจากรายชื่อ?")) return;
+    try {
+      const res = await callAPI({ action: "deleteStudent", studentId: currentId }, "POST");
+      if (res.ok) { await reloadList(); closeModalDirect(); }
+      else { alert("ลบไม่สำเร็จ"); }
+    } catch(e) { alert("เกิดข้อผิดพลาดในการลบ"); }
+  }
+
+  async function reloadList() {
+    const res = await callAPI({ action: "getList" });
+    if (res.ok) { students = res.students; updateStats(); filterTable(); }
+  }
+
+  // =============================================
+  // Helper: เรียก API พร้อมส่งรหัสผ่านไปด้วยทุกครั้ง
+  // =============================================
+  async function callAPI(params, method = "GET") {
+    params.password = userPassword; // ใส่รหัสผ่านไปด้วยทุก request
+
+    if (method === "GET") {
+      const qs = new URLSearchParams(params).toString();
+      const res = await fetch(`${API_URL}?${qs}`, { redirect: "follow" });
+      return res.json();
+    } else {
+      const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(params) });
+      return res.json();
+    }
+  }
+
+  // =============================================
+  // Modal helpers
+  // =============================================
+  function cancelEdit() {
+    if (isAdding) { closeModalDirect(); }
+    else { fillViewMode(currentDetail); document.getElementById("viewMode").style.display = "block"; document.getElementById("editMode").style.display = "none"; }
+  }
+  function closeModal(e) { if (e.target === document.getElementById("overlay")) closeModalDirect(); }
+  function closeModalDirect() { document.getElementById("overlay").classList.remove("open"); }
+  function clearForm() {
+    ["fPrefix","fGender","fFirstName","fLastName","fStudentId","fNickname","fProject","fTcas","fDob","fPhone","fLine","fIg","fHome","fNote"]
+    .forEach(id => { const el = document.getElementById(id); el.tagName === "SELECT" ? el.selectedIndex = 0 : el.value = ""; });
+  }
+  function show(id) { document.getElementById(id).style.display = "flex"; }
+  function hide(id) { document.getElementById(id).style.display = "none"; }
+
+  // =============================================
+  // ถ้าเคย login ไว้แล้วใน session นี้ ให้ login อัตโนมัติ
+  // =============================================
+  window.onload = function() {
+    const savedPw = sessionStorage.getItem("pw");
+    if (savedPw) {
+      document.getElementById("passwordInput").value = savedPw;
+      login();
+    }
+  };
+</script>
+</body>
+</html>
