@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>รายชื่อนิสิตพยาบาลศาสตร์ ชั้นปีที่ 1</title>
   <style>
-    /* ============================================= สีหลัก ============================================= */
     :root {
       --bg: #f0f6ff; --accent: #1a56a0; --accent-light: #dbeafe; --accent-mid: #2563eb;
       --text: #1e293b; --muted: #64748b; --border: #cbd5e1; --card: #ffffff;
@@ -15,7 +14,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI','Sarabun',sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    /* ============================================= หน้า LOGIN (รหัสผ่าน) ============================================= */
+    /* === หน้า LOGIN รหัสผ่าน === */
     #loginScreen {
       min-height: 100vh; display: flex; align-items: center; justify-content: center;
       background: linear-gradient(135deg, #1a3a6e 0%, #1a56a0 100%);
@@ -45,18 +44,7 @@
       color: #dc2626; border-radius: 8px; font-size: 0.87rem; display: none;
     }
 
-    /* ============================================= หน้า LOADING ============================================= */
-    #loadingScreen {
-      min-height: 100vh; display: none; align-items: center; justify-content: center;
-      flex-direction: column; gap: 16px; color: var(--muted);
-    }
-    .spinner {
-      width: 40px; height: 40px; border: 4px solid var(--border);
-      border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ============================================= หน้าหลัก ============================================= */
+    /* === หน้าหลัก === */
     #mainScreen { display: none; }
     header {
       background: linear-gradient(135deg, #1a3a6e 0%, #1a56a0 100%); color: white; padding: 24px 32px;
@@ -106,12 +94,11 @@
     .name-link:hover { text-decoration: underline; }
     .empty { text-align: center; padding: 60px; color: var(--muted); }
 
-    /* ============================================= MODAL ============================================= */
+    /* === MODAL === */
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; }
     .overlay.open { display: flex; }
     .modal { background: white; border-radius: 16px; width: 520px; max-width: 95vw; max-height: 90vh; overflow-y: auto; padding: 32px; position: relative; box-shadow: 0 24px 60px rgba(0,0,0,0.25); }
     .modal-close { position: absolute; top: 14px; right: 18px; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--muted); }
-    .modal-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; gap: 14px; color: var(--muted); }
 
     .avatar { width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 14px; }
     .avatar-f { background: linear-gradient(135deg,#ec4899,#f472b6); }
@@ -152,33 +139,30 @@
 </head>
 <body>
 
-<!-- ============================================= หน้า LOGIN (รหัสผ่าน) ============================================= -->
+<!-- =============================================
+     หน้า LOGIN — ใส่รหัสผ่านก่อนถึงเข้าเว็บได้
+     ============================================= -->
 <div id="loginScreen">
   <div class="login-box">
     <div class="icon">🏥</div>
     <h2>รายชื่อนิสิตพยาบาลศาสตร์</h2>
     <p>ชั้นปีที่ 1 ปีการศึกษา 2569<br>กรอกรหัสผ่านที่ได้รับจากเพื่อนในห้อง</p>
-    <!-- กด Enter ก็ login ได้ -->
     <input type="password" id="passwordInput" placeholder="รหัสผ่าน" onkeydown="if(event.key==='Enter') login()"/>
     <button class="btn-login" onclick="login()">เข้าสู่ระบบ</button>
-    <div class="login-error" id="loginError"></div>
+    <div class="login-error" id="loginError">รหัสผ่านไม่ถูกต้อง</div>
   </div>
 </div>
 
-<!-- ============================================= หน้า LOADING ============================================= -->
-<div id="loadingScreen">
-  <div class="spinner"></div>
-  <div>กำลังโหลดข้อมูล...</div>
-</div>
-
-<!-- ============================================= หน้าหลัก ============================================= -->
+<!-- =============================================
+     หน้าหลัก
+     ============================================= -->
 <div id="mainScreen">
   <header>
     <div class="header-left">
       <h1>🏥 รายชื่อนิสิตคณะพยาบาลศาสตร์ ชั้นปีที่ 1</h1>
       <p>มหาวิทยาลัยเกษตรศาสตร์ · ปีการศึกษา 2569</p>
       <div class="header-stats">
-        <div class="stat-box"><div class="num" id="totalCount">—</div><div class="lbl">ทั้งหมด</div></div>
+        <div class="stat-box"><div class="num" id="totalCount">61</div><div class="lbl">ทั้งหมด</div></div>
         <div class="stat-box"><div class="num" id="femaleCount">—</div><div class="lbl">นางสาว</div></div>
         <div class="stat-box"><div class="num" id="maleCount">—</div><div class="lbl">นาย</div></div>
       </div>
@@ -200,9 +184,7 @@
   <div class="table-wrap">
     <table>
       <thead>
-        <tr>
-          <th>ลำดับ</th><th>รหัสนิสิต</th><th>ชื่อ-นามสกุล</th><th>ชื่อเล่น</th><th>เพศ</th><th>TCAS รอบ</th>
-        </tr>
+        <tr><th>ลำดับ</th><th>รหัสนิสิต</th><th>ชื่อ-นามสกุล</th><th>ชื่อเล่น</th><th>เพศ</th><th>TCAS รอบ</th></tr>
       </thead>
       <tbody id="tableBody"></tbody>
     </table>
@@ -210,26 +192,25 @@
   </div>
 </div>
 
-<!-- ============================================= MODAL POPUP ============================================= -->
+<!-- =============================================
+     MODAL POPUP — รายละเอียด + แก้ไข
+     ============================================= -->
 <div class="overlay" id="overlay" onclick="closeModal(event)">
   <div class="modal" id="modal">
     <button class="modal-close" onclick="closeModalDirect()">✕</button>
 
-    <div id="modalLoading" class="modal-loading">
-      <div class="spinner"></div><div>กำลังโหลด...</div>
-    </div>
-
     <!-- VIEW MODE -->
-    <div id="viewMode" style="display:none;">
+    <div id="viewMode">
       <div class="avatar" id="viewAvatar">N</div>
-      <h2 id="viewName"></h2>
-      <p class="subtitle" id="viewSubtitle"></p>
+      <h2 id="viewName">ชื่อ</h2>
+      <p class="subtitle" id="viewSubtitle">รหัสนิสิต</p>
 
       <div class="info-grid">
         <div class="info-item"><label>ชื่อเล่น</label><span id="vNickname">—</span></div>
         <div class="info-item"><label>เพศ</label><span id="vGender">—</span></div>
         <div class="info-item"><label>รหัสนิสิต</label><span id="vStudentId">—</span></div>
         <div class="info-item"><label>TCAS รอบที่</label><span id="vTcas">—</span></div>
+        <!-- ⬇️ ช่องเหล่านี้รอกรอกข้อมูลเพิ่ม (เบอร์, Line, IG ฯลฯ) -->
         <div class="info-item"><label>เบอร์โทร</label><span id="vPhone">—</span></div>
         <div class="info-item"><label>Line ID</label><span id="vLine">—</span></div>
         <div class="info-item"><label>Instagram</label><span id="vIg">—</span></div>
@@ -301,97 +282,124 @@
 
 <script>
   // =============================================
-  // ⚙️ ตั้งค่าตรงนี้!
-  // ใส่ URL ของ Apps Script Web App ที่ Deploy แล้ว
+  // ⚙️ ตั้งรหัสผ่านตรงนี้ — แชร์ให้แค่เพื่อนในห้อง
   // =============================================
-  const API_URL = "ใส่ URL ของ Apps Script ตรงนี้";
-
-  // รหัสผ่านต้องตรงกับใน Apps Script (PASSWORD ตัวแปรใน Code.gs)
-  let userPassword = "";
-
-  let students      = [];
-  let currentDetail = null;
-  let currentId     = null;
-  let isAdding      = false;
-  let genderFilter  = "all";
+  const PASSWORD = "nurse2569";
 
   // =============================================
-  // LOGIN ด้วยรหัสผ่าน
+  // ข้อมูลนิสิต 61 คน
+  // ใส่ข้อมูลเพิ่ม (เบอร์, line, ig, ชื่อเล่น ฯลฯ) ตรงนี้ได้เลย
+  // หรือกด "แก้ไข" ในหน้าเว็บก็ได้
   // =============================================
-  async function login() {
-    const pw = document.getElementById("passwordInput").value.trim();
-    if (!pw) { showLoginError("กรุณากรอกรหัสผ่าน"); return; }
+  let students = [
+    { prefix:"นางสาว", firstName:"กฤตญาพัฒน์",  lastName:"ตรีกาญจนวัฒนา",    studentId:"6911700019", gender:"F", project:"โครงการส่งเสริมโอกาสศึกษาต่อในกลุ่มวิทยาศาสตร์สุขภาพ", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"กันยากร",      lastName:"ปิยะทัพภ์",        studentId:"6911700027", gender:"F", project:"โครงการรับนักเรียนดีเด่นจากโรงเรียนสาธิตแห่ง มก.", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"กุลธิดา",      lastName:"รัตนานุกูล",       studentId:"6911700035", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ชฎาพร",        lastName:"พร้อมสุข",         studentId:"6911700043", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ชนัฐญา",       lastName:"นิตยาธารีกุล",     studentId:"6911700051", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ชวัลพัชร",     lastName:"ภักตร์ขำ",         studentId:"6911700060", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นาย",    firstName:"ชานน",          lastName:"เปรมทวี",          studentId:"6911700078", gender:"M", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ฐิติกา",        lastName:"วังกลาง",          studentId:"6911700094", gender:"F", project:"โครงการส่งเสริมโอกาสศึกษาต่อในกลุ่มวิทยาศาสตร์สุขภาพ", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ฐิติพร",        lastName:"ทีตอ",             studentId:"6911700108", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ณัฐณิชา",       lastName:"อาจภักดี",         studentId:"6911700116", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ณัฐมน",         lastName:"พงษ์วัน",          studentId:"6911700124", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ดลชนก",         lastName:"เรืองศรี",         studentId:"6911700132", gender:"F", project:"โครงการเมล็ดพันธุ์สู่ศาสตร์แห่งแผ่นดิน", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ธัญชนก",        lastName:"สีวาดมา",          studentId:"6911700141", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"นภัสวรรณ",      lastName:"แก้วอุ่นเรือน",   studentId:"6911700159", gender:"F", project:"โครงการส่งเสริมโอกาสศึกษาต่อในกลุ่มวิทยาศาสตร์สุขภาพ", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"นุชริน",         lastName:"ใบธรรม",           studentId:"6911700167", gender:"F", project:"โครงการส่งเสริมโอกาสศึกษาต่อในกลุ่มวิทยาศาสตร์สุขภาพ", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"บัณฑิตาพร",     lastName:"เจนดง",            studentId:"6911700175", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"เบญญาภา",       lastName:"ธุนาสูรย์",        studentId:"6911700183", gender:"F", project:"โครงการเมล็ดพันธุ์สู่ศาสตร์แห่งแผ่นดิน", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ปกเกศ",          lastName:"แสงจันทร์",        studentId:"6911700191", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ปวริศา",         lastName:"ไชยดำ",            studentId:"6911700205", gender:"F", project:"โครงการส่งเสริมโอกาสศึกษาต่อในกลุ่มวิทยาศาสตร์สุขภาพ", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ปวิชญา",         lastName:"เสาหิน",           studentId:"6911700213", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ปาลิตา",         lastName:"ศิริกุล",          studentId:"6911700221", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ปิ่นนภา",        lastName:"น่าบัญฑิตย์",     studentId:"6911700230", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"พัชรพร",         lastName:"เสมจันทร์",        studentId:"6911700248", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"พัทธ์ศรัณย์",   lastName:"วาทวัฒนศักดิ์",   studentId:"6911700256", gender:"F", project:"โครงการส่งเสริมโอกาสศึกษาต่อในกลุ่มวิทยาศาสตร์สุขภาพ", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"พิชญธิดา",       lastName:"คำพา",             studentId:"6911700264", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ภคพร",           lastName:"ปั้นทอง",          studentId:"6911700272", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ภัทธิยา",        lastName:"แสนคำ",            studentId:"6911700281", gender:"F", project:"โครงการส่งเสริมโอกาสศึกษาต่อในกลุ่มวิทยาศาสตร์สุขภาพ", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ภารดี",          lastName:"สาลีโภชน์",        studentId:"6911700299", gender:"F", project:"โครงการรับนักเรียนดีเด่นจากโรงเรียนสาธิตแห่ง มก.", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"วนารี",          lastName:"คำนนท์",           studentId:"6911700302", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"วรัญญา",         lastName:"คำมงคุณ",          studentId:"6911700311", gender:"F", project:"โครงการส่งเสริมโอกาสศึกษาต่อในกลุ่มวิทยาศาสตร์สุขภาพ", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ศิริภัสสร",      lastName:"พวงศิริ",          studentId:"6911700337", gender:"F", project:"โครงการส่งเสริมโอกาสศึกษาต่อในกลุ่มวิทยาศาสตร์สุขภาพ", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ศิริรัตน์",      lastName:"แพงพา",            studentId:"6911700345", gender:"F", project:"โครงการส่งเสริมโอกาสศึกษาต่อในกลุ่มวิทยาศาสตร์สุขภาพ", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"สาวิตรี",        lastName:"มูลมานัส",         studentId:"6911700353", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นาย",    firstName:"สิทธิชัย",       lastName:"สินสุวรรณ",        studentId:"6911700361", gender:"M", project:"โครงการเมล็ดพันธุ์สู่ศาสตร์แห่งแผ่นดิน", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"สุธินี",          lastName:"จินุศร",           studentId:"6911700370", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"สุภารัตน์",      lastName:"แก้วยก",           studentId:"6911700388", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"สุวิชาดา",       lastName:"นูสันเทียะ",       studentId:"6911700396", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"หทัยชนก",        lastName:"ลิสอน",            studentId:"6911700400", gender:"F", project:"โครงการรับนักเรียนดีเด่นจากโรงเรียนสาธิตแห่ง มก.", tcas:"2", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"อานันท์ปภา",    lastName:"ฟองมูล",           studentId:"6911700418", gender:"F", project:"โครงการช้างเผือก", tcas:"1", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"จิราพร",         lastName:"เทียมฐานะ",        studentId:"6911700434", gender:"F", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"จีรารัศมิ์",     lastName:"สินธวิชัย",        studentId:"6911700442", gender:"F", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นาย",    firstName:"ฉลองขวัญ",       lastName:"กนกวงศ์เสถียร",   studentId:"6911700451", gender:"M", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นาย",    firstName:"ฐิตินนท์",        lastName:"กรดนวล",           studentId:"6911700469", gender:"M", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ณัชชา",          lastName:"กอสิงหวัฒนา",     studentId:"6911700477", gender:"F", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ณัฐชยา",         lastName:"พงศ์อนันต์",       studentId:"6911700485", gender:"F", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"ณัฐชา",          lastName:"กลีบบานเย็น",      studentId:"6911700493", gender:"F", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นาย",    firstName:"ธีรชัย",          lastName:"รัตนศรีสมพร",     studentId:"6911700507", gender:"M", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"นิโลบล",          lastName:"หนูเมือง",         studentId:"6911700515", gender:"F", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"บุญญิตา",         lastName:"เกิดโชค",          studentId:"6911700523", gender:"F", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นาย",    firstName:"ปรเมศวร์",        lastName:"รุ่งทิพยกุล",     studentId:"6911700531", gender:"M", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"พรหมพร",         lastName:"พรมแก้ว",          studentId:"6911700540", gender:"F", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"พัชราภรณ์",      lastName:"ฉัตรชยานนท์",     studentId:"6911700558", gender:"F", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"พิมฏ์สุภา",      lastName:"กมลกิจจาลักษณ์", studentId:"6911700574", gender:"F", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นาย",    firstName:"ภาคิน",           lastName:"เปี่ยมศิริ",       studentId:"6911700582", gender:"M", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"รวิภา",           lastName:"รอยลาภเจริญพร",  studentId:"6911700604", gender:"F", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"รวิวรรณ",         lastName:"แซ่หวัง",          studentId:"6911700612", gender:"F", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นาย",    firstName:"วรกร",             lastName:"ลิขิตมั่นชัย",    studentId:"6911700621", gender:"M", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"วัชรี",            lastName:"ไชยชำนิ",          studentId:"6911700639", gender:"F", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นางสาว", firstName:"วันทน์ณภัทร",    lastName:"ถิรธนวรรธน์",     studentId:"6911700647", gender:"F", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นาย",    firstName:"สิทธิพงษ์",       lastName:"กล่ำมาก",          studentId:"6911700655", gender:"M", project:"สอบผ่านระบบการคัดเลือกส่วนกลาง (Admissions)", tcas:"3", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+    { prefix:"นาย",    firstName:"สิรวิชญ์",         lastName:"จงกรด",            studentId:"6911700663", gender:"M", project:"โครงการรับตรงอิสระ มหาวิทยาลัยเกษตรศาสตร์", tcas:"4", nickname:"", phone:"", line:"", ig:"", dob:"", home:"", note:"" },
+  ];
 
-    userPassword = pw;
-    show("loadingScreen");
-    hide("loginScreen");
+  let currentIndex = null;
+  let isAdding = false;
+  let genderFilter = "all";
 
-    try {
-      const res = await callAPI({ action: "getList" });
-      if (res.error === "wrong_password") {
-        showLoginError("❌ รหัสผ่านไม่ถูกต้อง");
-        userPassword = "";
-        return;
-      }
-      if (res.ok) {
-        students = res.students;
-        updateStats();
-        renderTable(students);
-        show("mainScreen");
-        hide("loadingScreen");
-        // จำรหัสผ่านไว้ใน session (หายไปถ้าปิดแท็บ)
-        sessionStorage.setItem("pw", pw);
-      } else {
-        showLoginError("เกิดข้อผิดพลาด กรุณาลองใหม่");
-      }
-    } catch(e) {
-      showLoginError("เชื่อมต่อไม่ได้ ตรวจสอบ API_URL ใน code");
+  // === LOGIN ด้วยรหัสผ่าน (เก็บแค่ในเครื่อง ไม่ส่งข้อมูลไปไหน) ===
+  function login() {
+    const pw = document.getElementById("passwordInput").value;
+    if (pw === PASSWORD) {
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("mainScreen").style.display = "block";
+      updateStats();
+      renderTable(students);
+      sessionStorage.setItem("loggedIn", "yes"); // จำไว้แค่ตอนเปิดแท็บนี้
+    } else {
+      document.getElementById("loginError").style.display = "block";
     }
   }
-
-  function showLoginError(msg) {
-    show("loginScreen");
-    hide("loadingScreen");
-    const el = document.getElementById("loginError");
-    el.textContent = msg;
-    el.style.display = "block";
-  }
-
   function logout() {
     if (confirm("ออกจากระบบ?")) {
-      students = [];
-      userPassword = "";
-      sessionStorage.removeItem("pw");
+      sessionStorage.removeItem("loggedIn");
+      document.getElementById("mainScreen").style.display = "none";
+      document.getElementById("loginScreen").style.display = "flex";
       document.getElementById("passwordInput").value = "";
-      show("loginScreen");
-      hide("mainScreen");
     }
   }
 
-  // =============================================
-  // อัปเดตสถิติ
-  // =============================================
   function updateStats() {
     document.getElementById("totalCount").textContent  = students.length;
     document.getElementById("femaleCount").textContent = students.filter(s => s.gender === "F").length;
     document.getElementById("maleCount").textContent   = students.filter(s => s.gender === "M").length;
   }
 
-  // =============================================
-  // วาดตาราง
-  // =============================================
   function renderTable(list) {
     const tbody = document.getElementById("tableBody");
     tbody.innerHTML = "";
     document.getElementById("emptyMsg").style.display = list.length === 0 ? "block" : "none";
 
     list.forEach((s, i) => {
+      const realIndex = students.indexOf(s);
       const gBadge = s.gender === "F" ? '<span class="badge badge-f">หญิง</span>' : '<span class="badge badge-m">ชาย</span>';
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${i + 1}</td>
         <td>${s.studentId}</td>
-        <td><span class="name-link" onclick="openStudent('${s.studentId}')">${s.prefix}${s.firstName} ${s.lastName}</span></td>
+        <td><span class="name-link" onclick="openStudent(${realIndex})">${s.prefix}${s.firstName} ${s.lastName}</span></td>
         <td>${s.nickname || "—"}</td>
         <td>${gBadge}</td>
         <td><span class="badge-tcas">รอบที่ ${s.tcas || "—"}</span></td>
@@ -401,9 +409,6 @@
     document.getElementById("countLabel").textContent = `แสดง ${list.length} จาก ${students.length} คน`;
   }
 
-  // =============================================
-  // ค้นหา + กรองเพศ
-  // =============================================
   function filterTable() {
     const q = document.getElementById("searchBox").value.toLowerCase();
     const list = students.filter(s => {
@@ -422,70 +427,46 @@
     filterTable();
   }
 
-  // =============================================
-  // เปิด modal ดูรายละเอียด
-  // =============================================
-  async function openStudent(studentId) {
-    currentId = studentId;
-    isAdding  = false;
-    document.getElementById("modalLoading").style.display = "flex";
-    document.getElementById("viewMode").style.display     = "none";
-    document.getElementById("editMode").style.display     = "none";
-    document.getElementById("overlay").classList.add("open");
+  function openStudent(index) {
+    currentIndex = index;
+    isAdding = false;
+    const s = students[index];
 
-    try {
-      const res = await callAPI({ action: "getDetail", studentId });
-      if (res.ok) {
-        currentDetail = res.student;
-        fillViewMode(res.student);
-        document.getElementById("modalLoading").style.display = "none";
-        document.getElementById("viewMode").style.display     = "block";
-      } else {
-        closeModalDirect();
-        alert("ไม่พบข้อมูลนิสิต");
-      }
-    } catch(e) {
-      closeModalDirect();
-      alert("เกิดข้อผิดพลาดในการโหลดข้อมูล");
-    }
-  }
-
-  function fillViewMode(s) {
     const av = document.getElementById("viewAvatar");
     av.textContent = s.firstName[0];
-    av.className   = "avatar " + (s.gender === "F" ? "avatar-f" : "avatar-m");
+    av.className = "avatar " + (s.gender === "F" ? "avatar-f" : "avatar-m");
 
     document.getElementById("viewName").textContent     = s.prefix + s.firstName + " " + s.lastName;
     document.getElementById("viewSubtitle").textContent = "รหัสนิสิต " + s.studentId;
     document.getElementById("vNickname").textContent    = s.nickname || "—";
     document.getElementById("vGender").textContent      = s.gender === "F" ? "หญิง" : "ชาย";
-    document.getElementById("vStudentId").textContent   = s.studentId || "—";
-    document.getElementById("vPhone").textContent       = s.phone || "—";
-    document.getElementById("vLine").textContent        = s.line || "—";
-    document.getElementById("vIg").textContent          = s.ig || "—";
-    document.getElementById("vDob").textContent         = s.dob || "—";
-    document.getElementById("vHome").textContent        = s.home || "—";
+    document.getElementById("vStudentId").textContent   = s.studentId;
     document.getElementById("vTcas").textContent        = s.tcas ? "รอบที่ " + s.tcas : "—";
+    document.getElementById("vPhone").textContent       = s.phone || "—";
+    document.getElementById("vLine").textContent        = s.line  || "—";
+    document.getElementById("vIg").textContent          = s.ig    || "—";
+    document.getElementById("vDob").textContent         = s.dob   || "—";
+    document.getElementById("vHome").textContent        = s.home  || "—";
     document.getElementById("vProject").textContent     = s.project || "—";
-    document.getElementById("vNote").textContent        = s.note || "—";
+    document.getElementById("vNote").textContent        = s.note  || "—";
+
+    document.getElementById("viewMode").style.display = "block";
+    document.getElementById("editMode").style.display = "none";
+    document.getElementById("overlay").classList.add("open");
   }
 
-  // =============================================
-  // เพิ่มนิสิตใหม่
-  // =============================================
   function openAddForm() {
     isAdding = true;
-    currentId = null;
+    currentIndex = null;
     clearForm();
     document.getElementById("editTitle").textContent = "เพิ่มนิสิตใหม่";
-    document.getElementById("modalLoading").style.display = "none";
-    document.getElementById("viewMode").style.display     = "none";
-    document.getElementById("editMode").style.display     = "block";
+    document.getElementById("viewMode").style.display = "none";
+    document.getElementById("editMode").style.display = "block";
     document.getElementById("overlay").classList.add("open");
   }
 
   function switchToEdit() {
-    const s = currentDetail;
+    const s = students[currentIndex];
     document.getElementById("fPrefix").value    = s.prefix    || "นางสาว";
     document.getElementById("fGender").value    = s.gender    || "F";
     document.getElementById("fFirstName").value = s.firstName || "";
@@ -506,16 +487,13 @@
     document.getElementById("editMode").style.display = "block";
   }
 
-  // =============================================
-  // บันทึก
-  // =============================================
-  async function saveStudent() {
+  function saveStudent() {
     const fn  = document.getElementById("fFirstName").value.trim();
     const ln  = document.getElementById("fLastName").value.trim();
     const sid = document.getElementById("fStudentId").value.trim();
     if (!fn || !ln || !sid) { alert("กรุณากรอกชื่อ, นามสกุล และรหัสนิสิต"); return; }
 
-    const student = {
+    const updated = {
       prefix: document.getElementById("fPrefix").value,
       gender: document.getElementById("fGender").value,
       firstName: fn, lastName: ln, studentId: sid,
@@ -529,53 +507,27 @@
       home: document.getElementById("fHome").value.trim(),
       note: document.getElementById("fNote").value.trim(),
     };
+    if (isAdding) { students.push(updated); }
+    else { students[currentIndex] = updated; }
 
-    try {
-      const res = await callAPI({ action: "saveStudent", student }, "POST");
-      if (res.ok) { await reloadList(); closeModalDirect(); }
-      else { alert("บันทึกไม่สำเร็จ"); }
-    } catch(e) { alert("เกิดข้อผิดพลาดในการบันทึก"); }
+    updateStats();
+    filterTable();
+    closeModalDirect();
   }
 
-  // =============================================
-  // ลบนิสิต
-  // =============================================
-  async function deleteStudent() {
-    if (!confirm("ลบนิสิตคนนี้ออกจากรายชื่อ?")) return;
-    try {
-      const res = await callAPI({ action: "deleteStudent", studentId: currentId }, "POST");
-      if (res.ok) { await reloadList(); closeModalDirect(); }
-      else { alert("ลบไม่สำเร็จ"); }
-    } catch(e) { alert("เกิดข้อผิดพลาดในการลบ"); }
-  }
-
-  async function reloadList() {
-    const res = await callAPI({ action: "getList" });
-    if (res.ok) { students = res.students; updateStats(); filterTable(); }
-  }
-
-  // =============================================
-  // Helper: เรียก API พร้อมส่งรหัสผ่านไปด้วยทุกครั้ง
-  // =============================================
-  async function callAPI(params, method = "GET") {
-    params.password = userPassword; // ใส่รหัสผ่านไปด้วยทุก request
-
-    if (method === "GET") {
-      const qs = new URLSearchParams(params).toString();
-      const res = await fetch(`${API_URL}?${qs}`, { redirect: "follow" });
-      return res.json();
-    } else {
-      const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(params) });
-      return res.json();
+  function deleteStudent() {
+    const s = students[currentIndex];
+    if (confirm(`ลบ ${s.prefix}${s.firstName} ${s.lastName} ออกจากรายชื่อ?`)) {
+      students.splice(currentIndex, 1);
+      updateStats();
+      filterTable();
+      closeModalDirect();
     }
   }
 
-  // =============================================
-  // Modal helpers
-  // =============================================
   function cancelEdit() {
     if (isAdding) { closeModalDirect(); }
-    else { fillViewMode(currentDetail); document.getElementById("viewMode").style.display = "block"; document.getElementById("editMode").style.display = "none"; }
+    else { openStudent(currentIndex); }
   }
   function closeModal(e) { if (e.target === document.getElementById("overlay")) closeModalDirect(); }
   function closeModalDirect() { document.getElementById("overlay").classList.remove("open"); }
@@ -583,19 +535,14 @@
     ["fPrefix","fGender","fFirstName","fLastName","fStudentId","fNickname","fProject","fTcas","fDob","fPhone","fLine","fIg","fHome","fNote"]
     .forEach(id => { const el = document.getElementById(id); el.tagName === "SELECT" ? el.selectedIndex = 0 : el.value = ""; });
   }
-  function show(id) { document.getElementById(id).style.display = "flex"; }
-  function hide(id) { document.getElementById(id).style.display = "none"; }
 
-  // =============================================
-  // ถ้าเคย login ไว้แล้วใน session นี้ ให้ login อัตโนมัติ
-  // =============================================
-  window.onload = function() {
-    const savedPw = sessionStorage.getItem("pw");
-    if (savedPw) {
-      document.getElementById("passwordInput").value = savedPw;
-      login();
-    }
-  };
+  // ถ้าเคย login ไว้แล้วในแท็บนี้ ไม่ต้อง login ใหม่
+  if (sessionStorage.getItem("loggedIn") === "yes") {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("mainScreen").style.display = "block";
+    updateStats();
+    renderTable(students);
+  }
 </script>
 </body>
 </html>
